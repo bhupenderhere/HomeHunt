@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { collection, getDocs, limit, orderBy, query, where } from "firebase/firestore"
+import { collection, getDocs, query, where } from "firebase/firestore"
 import { toast } from "react-toastify"
 import rentCategoryImage from "../assets/jpg/rentCategoryImage.jpg"
 import sellCategoryImage from "../assets/jpg/sellCategoryImage.jpg"
@@ -8,7 +8,12 @@ import BootstrapIcon from "../components/BootstrapIcon"
 import PageShell from "../components/PageShell"
 import Slider from "../components/Slider"
 import { db } from "../firebase.config"
-import { formatDiscountAmount, formatListingPrice } from "../lib/listings"
+import {
+	formatDiscountAmount,
+	formatListingPrice,
+	mapListingDocs,
+	sortListingsByNewest,
+} from "../lib/listings"
 import {
 	panelAccentClassName,
 	panelClassName,
@@ -27,8 +32,8 @@ const previewConfigs = [
 		href: "/category/rent",
 		icon: "buildings-fill",
 		emptyState: "Rental inventory will show up here once new listings are published.",
-		buildQuery: (listingsRef) =>
-			query(listingsRef, where("type", "==", "rent"), orderBy("timestamp", "desc"), limit(3)),
+		field: "type",
+		value: "rent",
 	},
 	{
 		key: "sale",
@@ -38,8 +43,8 @@ const previewConfigs = [
 		href: "/category/sale",
 		icon: "house-heart-fill",
 		emptyState: "Sale listings will appear here as soon as the catalog grows.",
-		buildQuery: (listingsRef) =>
-			query(listingsRef, where("type", "==", "sale"), orderBy("timestamp", "desc"), limit(3)),
+		field: "type",
+		value: "sale",
 	},
 	{
 		key: "offers",
@@ -49,8 +54,8 @@ const previewConfigs = [
 		href: "/offers",
 		icon: "ticket-perforated-fill",
 		emptyState: "Discounted listings are not live right now.",
-		buildQuery: (listingsRef) =>
-			query(listingsRef, where("offer", "==", true), orderBy("timestamp", "desc"), limit(3)),
+		field: "offer",
+		value: true,
 	},
 ]
 
@@ -104,15 +109,13 @@ function Explore() {
 			try {
 				const listingsRef = collection(db, "listings")
 				const groups = await Promise.all(
-					previewConfigs.map(async ({ key, buildQuery }) => {
-						const querySnap = await getDocs(buildQuery(listingsRef))
+					previewConfigs.map(async ({ key, field, value }) => {
+						const querySnap = await getDocs(query(listingsRef, where(field, "==", value)))
+						const listings = sortListingsByNewest(mapListingDocs(querySnap)).slice(0, 3)
 
 						return [
 							key,
-							querySnap.docs.map((doc) => ({
-								id: doc.id,
-								data: doc.data(),
-							})),
+							listings,
 						]
 					})
 				)

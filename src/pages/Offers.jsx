@@ -1,18 +1,11 @@
 import { useEffect, useState } from "react"
-import {
-	collection,
-	getDocs,
-	query,
-	where,
-	orderBy,
-	limit,
-	startAfter,
-} from "firebase/firestore"
+import { collection, getDocs, query, where } from "firebase/firestore"
 import { db } from "../firebase.config"
 import { toast } from "react-toastify"
 import Spinner from "../components/Spinner"
 import ListingItem from "../components/ListingItem"
 import PageShell from "../components/PageShell"
+import { mapListingDocs, sortListingsByNewest } from "../lib/listings"
 import {
 	panelClassName,
 	sectionEyebrowClassName,
@@ -20,42 +13,21 @@ import {
 	subtleButtonClassName,
 } from "../lib/ui"
 
+const PAGE_SIZE = 10
+
 function Offers() {
-	const [listings, setListings] = useState(null)
+	const [listings, setListings] = useState([])
 	const [loading, setLoading] = useState(true)
-	const [lastFetchedListing, setLastFetchedListing] = useState(null)
+	const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 
 	useEffect(() => {
 		const fetchListings = async () => {
 			try {
-				// Get Reference
 				const listingsRef = collection(db, "listings")
-
-				// Create a query
-				const q = query(
-					listingsRef,
-					where("offer", "==", true),
-					orderBy("timestamp", "desc"),
-					limit(10)
-				)
-
-				
-				// Execute query
+				const q = query(listingsRef, where("offer", "==", true))
 				const querySnap = await getDocs(q)
-
-				const lastVisible = querySnap.docs[querySnap.docs.length - 1]
-				setLastFetchedListing(lastVisible)
-
-				const list = []
-
-				querySnap.forEach((doc) => {
-					return list.push({
-						id: doc.id,
-						data: doc.data(),
-					})
-				})
-
-				setListings(list)
+				setListings(sortListingsByNewest(mapListingDocs(querySnap)))
+				setVisibleCount(PAGE_SIZE)
 			} catch (error) {
 				console.log(error)
 				toast.error("Could not fetch offer listings")
@@ -68,43 +40,7 @@ function Offers() {
 		fetchListings()
 	}, [])
 
-	// Pagination / Load More
-	const onFetchMoreListings = async () => {
-		if (!lastFetchedListing) {
-			return
-		}
-
-		try {
-			const listingsRef = collection(db, "listings")
-
-			const q = query(
-				listingsRef,
-				where("offer", "==", true),
-				orderBy("timestamp", "desc"),
-				startAfter(lastFetchedListing),
-				limit(10)
-			)
-
-			const querySnap = await getDocs(q)
-
-			const lastVisible = querySnap.docs[querySnap.docs.length - 1]
-			setLastFetchedListing(lastVisible)
-
-			const list = []
-
-			querySnap.forEach((doc) => {
-				return list.push({
-					id: doc.id,
-					data: doc.data(),
-				})
-			})
-
-			setListings((prevState) => [...prevState, ...list])
-		} catch (error) {
-			console.log(error)
-			toast.error("Could not fetch more offer listings")
-		}
-	}
+	const visibleListings = listings.slice(0, visibleCount)
 
 	return (
 		<PageShell
@@ -114,7 +50,7 @@ function Offers() {
 		>
 			{loading ? (
 				<Spinner />
-			) : listings && listings.length > 0 ? (
+			) : listings.length > 0 ? (
 				<>
 					<section className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
 						<div className={statCardClassName}>
@@ -140,7 +76,7 @@ function Offers() {
 					</section>
 
 					<ul className="grid gap-5">
-						{listings.map((listing) => (
+						{visibleListings.map((listing) => (
 							<ListingItem
 								key={listing.id}
 								listing={listing.data}
@@ -149,9 +85,13 @@ function Offers() {
 						))}
 					</ul>
 
-					{lastFetchedListing && (
+					{visibleCount < listings.length && (
 						<div className="mt-8 flex justify-center">
-							<button className={subtleButtonClassName} onClick={onFetchMoreListings} type="button">
+							<button
+								className={subtleButtonClassName}
+								onClick={() => setVisibleCount((currentCount) => currentCount + PAGE_SIZE)}
+								type="button"
+							>
 								Load More
 							</button>
 						</div>

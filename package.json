@@ -1,5 +1,5 @@
 {
-  "name": "homehunt",
+  "name": "home-hunt",
   "version": "1.0.0",
   "scripts": {
     "start": "react-scripts start",
