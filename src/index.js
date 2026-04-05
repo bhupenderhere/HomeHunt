@@ -1,4 +1,5 @@
 import "./index.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import React from "react";
 import Routes from "./routes";
 import ReactDOM from "react-dom/client";

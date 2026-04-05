@@ -56,10 +56,12 @@ function Offers() {
 				})
 
 				setListings(list)
-				setLoading(false)
 			} catch (error) {
 				console.log(error)
-				toast.error(error)
+				toast.error("Could not fetch offer listings")
+				setListings([])
+			} finally {
+				setLoading(false)
 			}
 		}
 
@@ -68,6 +70,10 @@ function Offers() {
 
 	// Pagination / Load More
 	const onFetchMoreListings = async () => {
+		if (!lastFetchedListing) {
+			return
+		}
+
 		try {
 			const listingsRef = collection(db, "listings")
 
@@ -94,9 +100,9 @@ function Offers() {
 			})
 
 			setListings((prevState) => [...prevState, ...list])
-			setLoading(false)
 		} catch (error) {
-			toast.error("Could not fetch listings")
+			console.log(error)
+			toast.error("Could not fetch more offer listings")
 		}
 	}
 

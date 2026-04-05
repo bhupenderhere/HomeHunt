@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes as Switch, Route } from "react-router-dom"
+import { BrowserRouter, Routes as Switch, Route, Navigate } from "react-router-dom"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import Navbar from "./components/Navbar"
@@ -6,11 +6,8 @@ import { ThemeProvider } from "./context/ThemeContext"
 import PrivateRoute from "./components/PrivateRoute"
 import {
   Explore,
-  ForgotPassword,
   Offers,
   Profile,
-  SignIn,
-  SignUp,
   Category,
   CreateListing,
   Listing,
@@ -27,16 +24,16 @@ export default function Routes() {
 						<Route path="/" element={<Explore />} />
 						<Route path="/offers" element={<Offers />} />
 						<Route path="/category/:categoryName" element={<Category />} />
-						<Route path="/profile" element={<PrivateRoute />}>
+						<Route element={<PrivateRoute />}>
 							<Route path="/profile" element={<Profile />} />
+							<Route path="/create-listing" element={<CreateListing />} />
+							<Route path="/edit-listing/:listingId" element={<EditListing />} />
 						</Route>
-						<Route path="/sign-in" element={<SignIn />} />
-						<Route path="/sign-up" element={<SignUp />} />
-						<Route path="/forgot-password" element={<ForgotPassword />} />
-						<Route path="/create-listing" element={<CreateListing />} />
 						<Route path="/category/:categoryName/:listingId" element={<Listing />} />
 						<Route path="/contact/:landlordId" element={<Contact />} />
-						<Route path="/edit-listing/:listingId" element={<EditListing />} />
+						<Route path="/sign-in" element={<Navigate to="/profile" replace />} />
+						<Route path="/sign-up" element={<Navigate to="/profile" replace />} />
+						<Route path="/forgot-password" element={<Navigate to="/" replace />} />
 					</Switch>
 					<Navbar />
 				</div>

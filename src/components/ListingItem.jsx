@@ -1,9 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ReactComponent as DeleteIcon } from "../assets/svg/deleteIcon.svg";
-import { ReactComponent as EditIcon } from "../assets/svg/editIcon.svg";
-import bedIcon from "../assets/svg/bedIcon.svg";
-import bathtubIcon from "../assets/svg/bathtubIcon.svg";
+import BootstrapIcon from "./BootstrapIcon";
 import { formatListingPrice } from "../lib/listings";
 import { panelClassName } from "../lib/ui";
 
@@ -64,13 +61,13 @@ function ListingItem({ listing, id, onEdit, onDelete }) {
 
           <div className="flex flex-wrap gap-3 text-sm font-medium text-slate-600">
             <div className="flex items-center gap-2 rounded-full bg-sand-100 px-3 py-2">
-              <img src={bedIcon} alt="bed" className="h-4 w-4" />
+              <BootstrapIcon name="door-open-fill" className="text-sm" />
               <span>
                 {listing.bedrooms > 1 ? `${listing.bedrooms} Bedrooms` : "1 Bedroom"}
               </span>
             </div>
             <div className="flex items-center gap-2 rounded-full bg-sand-100 px-3 py-2">
-              <img src={bathtubIcon} alt="bath" className="h-4 w-4" />
+              <BootstrapIcon name="droplet-fill" className="text-sm" />
               <span>
                 {listing.bathrooms > 1
                   ? `${listing.bathrooms} Bathrooms`
@@ -95,7 +92,7 @@ function ListingItem({ listing, id, onEdit, onDelete }) {
               className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-md transition hover:bg-slate-900 hover:text-white"
               aria-label="Edit listing"
             >
-              <EditIcon className="h-4 w-4" />
+              <BootstrapIcon name="pencil-fill" className="text-sm" />
             </button>
           )}
 
@@ -106,7 +103,7 @@ function ListingItem({ listing, id, onEdit, onDelete }) {
               className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-red-500 shadow-md transition hover:bg-red-500 hover:text-white"
               aria-label="Delete listing"
             >
-              <DeleteIcon className="h-4 w-4" fill="currentColor" />
+              <BootstrapIcon name="trash-fill" className="text-sm" />
             </button>
           )}
         </div>

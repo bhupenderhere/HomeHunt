@@ -1,11 +1,12 @@
 import { useEffect } from "react"
+import BootstrapIcon from "./BootstrapIcon"
 import OAuth from "./OAuth"
 import {
 	panelClassName,
 	sectionEyebrowClassName,
 } from "../lib/ui"
 
-function AuthRequiredModal({ open, onClose }) {
+function AuthRequiredModal({ open, onClose, redirectPath = "/profile" }) {
 	useEffect(() => {
 		if (!open) {
 			return undefined
@@ -37,29 +38,29 @@ function AuthRequiredModal({ open, onClose }) {
 				className={`${panelClassName} w-full max-w-md overflow-hidden px-6 py-6 shadow-2xl sm:px-7`}
 				onClick={(event) => event.stopPropagation()}
 			>
-				<div className="flex justify-end">
+				<div className="flex justify-end mb-4">
 					<button
 						type="button"
 						className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-xl font-semibold text-slate-500 transition duration-200 hover:bg-white hover:text-slate-900"
 						onClick={onClose}
 						aria-label="Close sign in popup"
 					>
-						<span aria-hidden="true">&times;</span>
+						<BootstrapIcon name="x-lg" className="text-lg" />
 					</button>
 				</div>
 
 				<div className="rounded-[24px] bg-brand-50/80 p-5">
 					<p className={sectionEyebrowClassName}>Profile Access</p>
 					<h2 className="mt-3 font-display text-3xl text-ink-950">
-						Sign in to open your profile
+						Continue with Google
 					</h2>
 					<p className="mt-3 text-sm leading-7 text-slate-600">
-						Continue with Google to manage listings, update your account,
-						and jump straight into your profile.
+						Use the popup sign-in to manage listings, update your account,
+						and return to the page you were trying to open.
 					</p>
 				</div>
 
-				<OAuth redirectPath="/profile" showDivider={false} />
+				<OAuth redirectPath={redirectPath} showDivider={false} />
 			</div>
 		</div>
 	)

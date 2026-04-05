@@ -1,10 +1,10 @@
 import axios from "axios";
 
-import { useState, useEffect, useRef } from "react";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useState, useEffect } from "react";
+import { getAuth } from "firebase/auth";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase.config";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import PageShell from "../components/PageShell";
 import ListingEditorForm from "../components/ListingEditorForm";
@@ -34,29 +34,15 @@ function CreateListing() {
     formData;
 
   const auth = getAuth();
-  const location = useLocation();
   const navigate = useNavigate();
-  const isMounted = useRef(true);
   const imageCount = images?.length ?? 0;
+  const userId = auth.currentUser?.uid;
 
   useEffect(() => {
-    if (isMounted.current) {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        if (user) {
-          setFormData((prevState) => ({ ...prevState, userRef: user.uid }));
-        } else {
-          navigate("/sign-in", { replace: true, state: { from: location } });
-        }
-      });
-
-      return () => {
-        isMounted.current = false;
-        unsubscribe();
-      };
+    if (userId) {
+      setFormData((prevState) => ({ ...prevState, userRef: userId }));
     }
-
-    return undefined;
-  }, [auth, location, navigate]);
+  }, [userId]);
 
   const onSubmit = async (e) => {
     e.preventDefault();

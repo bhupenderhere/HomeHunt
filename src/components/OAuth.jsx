@@ -3,9 +3,9 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth"
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore"
 import { db } from "../firebase.config"
 import { toast } from "react-toastify"
-import googleIcon from "../assets/svg/googleIcon.svg"
 import { primaryButtonClassName } from "../lib/ui"
 import { getAuthRedirectPath } from "../lib/auth"
+import BootstrapIcon from "./BootstrapIcon"
 
 function OAuth({ redirectPath = "/profile", showDivider = true }) {
 	const navigate = useNavigate()
@@ -25,10 +25,19 @@ function OAuth({ redirectPath = "/profile", showDivider = true }) {
 			// If user doesn't exists, create user
 			if (!docSnap.exists()) {
 				await setDoc(doc(db, "users", user.uid), {
+					uid: user.uid,
 					name: user.displayName,
 					email: user.email,
 					timestamp: serverTimestamp(),
 				})
+			} else if (!docSnap.data()?.uid) {
+				await setDoc(
+					doc(db, "users", user.uid),
+					{
+						uid: user.uid,
+					},
+					{ merge: true }
+				)
 			}
 
 			toast.success("Signed in with Google")
@@ -52,7 +61,7 @@ function OAuth({ redirectPath = "/profile", showDivider = true }) {
 				className={`${primaryButtonClassName} mt-4 w-full gap-3 bg-white !text-slate-900 shadow-none ring-1 ring-white/80 hover:bg-sand-50`}
 				onClick={onGoogleClick}
 			>
-				<img src={googleIcon} alt="google" className="h-5 w-5" />
+				<BootstrapIcon name="google" className="text-base !text-slate-900" />
 				<span className="!text-slate-900">Continue with Google</span>
 			</button>
 		</div>

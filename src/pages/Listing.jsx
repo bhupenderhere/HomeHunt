@@ -11,8 +11,8 @@ import { getDoc, doc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { db } from "../firebase.config";
 import PageShell from "../components/PageShell";
+import BootstrapIcon from "../components/BootstrapIcon";
 import Spinner from "../components/Spinner";
-import shareIcon from "../assets/svg/shareIcon.svg";
 import { formatDiscountAmount, formatListingPrice } from "../lib/listings";
 import {
   panelClassName,
@@ -92,7 +92,7 @@ function Listing() {
                 }, 2000);
               }}
             >
-              <img src={shareIcon} alt="share" className="h-5 w-5" />
+              <BootstrapIcon name="share-fill" className="text-lg text-slate-900" />
             </button>
 
             {shareLinkCopied && (

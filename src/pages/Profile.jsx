@@ -12,8 +12,7 @@ import {
 import { db } from "../firebase.config"
 import { useNavigate, Link } from "react-router-dom"
 import { toast } from "react-toastify"
-import arrowRight from "../assets/svg/keyboardArrowRightIcon.svg"
-import homeIcon from "../assets/svg/homeIcon.svg"
+import BootstrapIcon from "../components/BootstrapIcon"
 import PageShell from "../components/PageShell"
 import Spinner from "../components/Spinner"
 import ListingItem from "../components/ListingItem"
@@ -220,7 +219,7 @@ function Profile() {
 					className={`${panelClassName} group flex h-full flex-col justify-between p-6 transition duration-200 hover:-translate-y-1`}
 				>
 					<div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50">
-						<img src={homeIcon} alt="home" className="h-7 w-7" />
+						<BootstrapIcon name="house-door-fill" className="text-[1.75rem] text-brand-700" />
 					</div>
 					<div className="mt-16">
 						<p className="text-xs font-semibold uppercase tracking-[0.35em] text-brand-700">
@@ -235,7 +234,7 @@ function Profile() {
 					</div>
 					<div className="mt-6 flex items-center gap-3 text-sm font-semibold text-brand-700">
 						<span>Open listing editor</span>
-						<img src={arrowRight} alt="arrow right" className="h-4 w-4" />
+						<BootstrapIcon name="arrow-right" className="text-base" />
 					</div>
 				</Link>
 			</div>
